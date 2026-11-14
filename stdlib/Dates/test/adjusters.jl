@@ -8,10 +8,12 @@ using Dates
 @testset "trunc" begin
     dt = Dates.Date(2012, 12, 21)
     @test trunc(dt, Dates.Year) == Dates.Date(2012)
+    @test trunc(dt, Dates.Quarter) == Dates.Date(2012, 10)
     @test trunc(dt, Dates.Month) == Dates.Date(2012, 12)
     @test trunc(dt, Dates.Day) == Dates.Date(2012, 12, 21)
     dt = Dates.DateTime(2012, 12, 21, 16, 30, 20, 200)
     @test trunc(dt, Dates.Year) == Dates.DateTime(2012)
+    @test trunc(dt, Dates.Quarter) == Dates.DateTime(2012, 10)
     @test trunc(dt, Dates.Month) == Dates.DateTime(2012, 12)
     @test trunc(dt, Dates.Day) == Dates.DateTime(2012, 12, 21)
     @test trunc(dt, Dates.Hour) == Dates.DateTime(2012, 12, 21, 16)
@@ -344,6 +346,11 @@ end
     @test_throws MethodError filter((x, y)->x + y, Dates.Date(2013):Dates.Day(1):Dates.Date(2014))
     @test_throws MethodError Dates.DateFunction((x, y)->x + y, Date(0))
     @test_throws ArgumentError Dates.DateFunction((dt)->2, Date(0))
+    @test contains(sprint(show, Dates.DateFunction(Dates.ismonday, Date(0))), "ismonday")
+    # Time adjusters step by the finest unit given unless told otherwise
+    @test Time(t -> minute(t) == 30, 1, 0, 0; step=Minute(1)) == Time(1, 30)
+    @test Time(t -> millisecond(t) == 3, 1, 0, 0, 0) == Time(1, 0, 0, 3)
+    @test Time(t -> nanosecond(t) == 3, 1, 0, 0, 0, 0) == Time(1, 0, 0, 0, 0, 3)
     @test length(filter(x->true, Dates.Date(2013):Dates.Day(1):Dates.Date(2013, 2))) == 32
     @test length(filter(x->true, Dates.Date(2013):Dates.Day(1):Dates.Date(2013, 1, 1))) == 1
     @test length(filter(x->true, Dates.Date(2013):Dates.Day(1):Dates.Date(2013, 1, 2))) == 2

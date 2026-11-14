@@ -1,0 +1,8 @@
+codecov:
+  # Master coverage comes from builds whose other jobs often fail. Without this,
+  # pull requests are compared against the last master commit with passing CI.
+  require_ci_to_pass: false
+coverage:
+  status:
+    project: off
+    patch: off
